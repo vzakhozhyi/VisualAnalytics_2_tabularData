@@ -118,15 +118,17 @@ table(eduwa$LocaleType,exclude = 'nothing')
 ```{r freqTab_rel, eval=FALSE}
 # relative values
 absoluteT=table(eduwa$LocaleType,exclude = 'nothing')
-prop.table(absoluteT)
+
+#exclude = 'nothing' - need to add that to show the missing data, otherwise R will not give us the missing data
+prop.table(absoluteT) #the proportions table  
 ```
 
 This table tells us the location of the public schools. What is the right visual for this? Sometimes the answer seems obvious, as tradition or habits give so much weight to decisions. Let's use the very well known **pie chart**:
 
 ```{r pieBasic, eval=FALSE}
 # the pie plots the table:
-ToPlot=prop.table(absoluteT)
-pie(ToPlot)
+ToPlot=prop.table(absoluteT) #saving the result of the prop.table 
+pie(ToPlot) #make a pie chart 
 ```
 
 You should always keep it simple. Then decorate. For example, you can start improving the plot you already *have*:
@@ -142,7 +144,6 @@ We could alter the fifth label:
 names(ToPlot)[5]='Unknown'
 ```
 
-
 * Our plot did not have a title. Titles (and subtitles) are important. To give a title, it can be a *question* to be answered by the plot:
 
 
@@ -152,8 +153,8 @@ titleText='Where are Public Schools located in WA in 2019?'
 sourceText='Source: US Department of Education'
 
 pie(ToPlot,
-    main=titleText,
-    sub=sourceText)
+    main=titleText, #agrument main means give a title
+    sub=sourceText)  #argument sub means sourse
 ```
 
 The title can *guide* the reader to recognise the purpose of your plot:
@@ -168,11 +169,14 @@ pie(ToPlot,
 ```
 
 
+
 The title can also *suggest* the decision:
 
 ```{r pieTitle_suggestion, eval=FALSE}
 # the pie plots the table:
 titleText3='WA needs to fully categorize school locations\n(info from 2018)'
+
+#\n will divide the text and bring the rest of the title to the 2nd line
 
 pie(ToPlot,
     main=titleText3,
@@ -202,7 +206,7 @@ paletteHere=rainbow(length(ToPlot)) # customizing set of colors
 # plotting
 pie(x=ToPlot,#table
     col = paletteHere, 
-    labels = ToPlot,
+    labels = ToPlot1,
     main=titleText,
     sub=sourceText)
 
@@ -211,7 +215,7 @@ pie(x=ToPlot,#table
 
 The labels need better work:
 ```{r percentExample, eval=FALSE}
-paste0(round(ToPlot,2),'%')
+paste0(round(ToPlot,2),'%') #paste0 means that we combine 2 elements but without space between them; paste command will insert space between it 
 ```
 
 Then,
@@ -268,7 +272,7 @@ Most people tend to use pie charts with categorical data, but this **should not*
 barplot(ToPlot,
          col = paletteHere,
          main=titleText,
-         sub=sourceText)
+         sub=sourceText) 
 ```
 
 We saved some space as no legend was needed (the less **ink** the better visual). Speaking of saving, we can get rid of the colors (they were needed to differentiate the slices). 
@@ -283,7 +287,7 @@ barplot(ToPlot,
      border=NA, #no border
      main=titleText,
      sub=sourceText,
-     ylim=c(0,50),
+     ylim=c(0,50),  
      ylab = '(in %)' # show unit
      )
 ```
@@ -321,7 +325,7 @@ location=barplot(ToPlot,
      sub=sourceText,
      ylim=c(0,50),
      ylab = '(in %)',
-     horiz = T) # ORIENTATION
+     horiz = T) # ORIENTATION T means True, if its F - its False, 
 
 #annotating
 text(x=location,y=ToPlot,labels=plotLabels,
@@ -464,7 +468,7 @@ location=barplot(ToPlot,
          xaxt="n") # no x-axis, so I customize it below...
 
 text(x=ToPlot,y=location,labels=plotLabels,pos = 4,cex = 0.7) 
-title(sub=sourceText, adj=0,cex.sub=0.7,line = 3) 
+title(sub=sourceText, adj=0,cex.sub=0.7,line = 3)
 
 #reference line
 abline(v=25,lty=3,lwd=3)
@@ -473,8 +477,8 @@ abline(v=25,lty=3,lwd=3)
 # customizing tick values
 newXvalues<-c(0,10,25,40,50) # you just want to show this on the axis
 axis(side=1, 
-     at=newXvalues, 
-     labels = newXvalues,
+     at=newXvalues, #the ticks
+     labels = newXvalues, #the numbers of the ticks
      cex.axis=0.8)
 
 ```
@@ -488,7 +492,7 @@ There are alternative libraries, like **ggplot2**, that are also frequently used
 
 ```{r ggplot1, eval=FALSE}
 
-tableFreq=as.data.frame(ToPlot)
+tableFreq=as.data.frame(ToPlot) #converting the table with numbers into the data frame and called it Table of Freq
 names(tableFreq)=c("locale","pct")
 #you have:
 tableFreq
@@ -506,8 +510,8 @@ library(ggplot2)
 ```{r ggplot_base, eval=FALSE}
 #base GGPLOT2 starts with a "base", telling WHAT VARIABLES TO PLOT
 base= ggplot(data = tableFreq, 
-             aes(x = locale,
-                 y = pct)) 
+             aes(x = locale, #aes - aestatics; choose the columns which to plot
+                 y = pct))
 
 ```
 
@@ -515,7 +519,7 @@ base= ggplot(data = tableFreq,
 
 ```{r bar_gg, eval=FALSE}
 plot1 = base + geom_bar(fill ="gray",
-                        stat = 'identity') # y is just what it is!
+                        stat = 'identity') # y is just what it is! plotting what it sees, no calculations are done by R
 plot1
 ```
 
