@@ -1,114 +1,25 @@
-<br> 
-<center><img src="http://i.imgur.com/sSaOozN.png" width="500"></center>
-
-## Course: Visual Analytics for Policy and Management
-
-### Prof. José Manuel Magallanes, PhD 
-
-_____
-<a id='part1'></a>
-
-# Part 2: Visualizing Tabular data
-### Univariate Case
-
-_____
-
-Contents:
-
-1. [Intro.](#part1)
-
-2. [Data Types.](#part2) 
-
-3. [Data Processes.](#part3)
-
-    3.1 [Classification.](#part31)
-    * [Nominal Data.](#part311)
-    * [Ordinal Data.](#part312)
-    
-    3.2 [Counting.](#part32)
-    
-    3.3 [Measurement.](#part33) 
-    
-
-_____
-
-Most data are commonly organized in tabular format, that is, tables. When data is in tabular format, cases are organized in rows, while variables (information about the cases) are organized in columns. Almost every data you have used in a spreadsheet follows that structure. 
-
-For example, when you visit the [website](https://nces.ed.gov/ccd/) of the Common Core of Data from the US Department of Education, you can get a data set with detailed information on public schools at the state of Washington. Let me get a data table I have based on that:
-
-
+---
+title: "V2_TabularData_univar_Ex1"
+author: "Vitalii Zakhozhyi"
+---
 
 ```{r getData, eval=FALSE}
 link='https://github.com/EvansDataScience/VisualAnalytics_2_tabularData/raw/master/data/eduwa.rda'
-
 #getting the data TABLE from the file in the cloud:
 load(file=url(link))
 ```
-
-When you are in RStudio, you can view the data table by clicking on its name at the _Environment_ .
-
-It also good to know _how much_ info you have:
-```{r dataDimension, eval=FALSE}
-#number of rows and columns
-dim(eduwa) #nrow(eduwa) ncol(eduwa)
-
-```
-
-This is the list of the 24 columns:
 
 ```{r column_Names, eval=FALSE}
 names(eduwa)
 ```
 
-
-When dealing with tabular data, you can suspect that you can produce a visualization for each column, and then for a couple of them simultaneously, and then for three or more. 
-
-In this material, we will pay attention to the _univariate_ case; which is common for searching problems or veryfing outcomes; not for giving explanations. Then, when dealing with univariate data, you need to be aware of two things: _what question you are trying to answer_; and _how to treat a particular variable_ to build the plot that will answer that question.
-
-[Go to table of contents.](#part1)
-
-<a id='part2'></a>
-
-## Data Types
-
-I can not anticipate all the questions you can try to answer via plots; but I can tell you that you are always limited by the **nature** of the variables you have at hand. Generally speaking, you have either _categorical_ or _numerical_ data in each column, and whatever question you have, you first need to know how that variable you are planing to use has been encoded, so you can plan the treatment. In R, we can know that like this:
-
 ```{r dataSTR, eval=FALSE}
-# this 'width = 70,strict.width='cut' means
-# you do not want to see more than 70 characters per row.
-
 str(eduwa,width = 70,strict.width='cut')
 ```
 
-The ones that say **num** are obviously numbers (numbers in R are *numeric* when decimal values are detected, and *integer* if they are not). The ones that say **chr** are strings, which are _candidates_ to be  **key** columns, which are not variables themselves, but identifiers of the cases. In this case, the first four are identifiers, as well as the the 7th, 10th and 15th columns (*school names*, _address_ and _phone_, respectively). Those variables are not to be analyzed statistically, but may be used for annotating (7th and 15th column) or for geocoding (10th column). Notice that for these data, _State_ is not to be analyzed as it is a constant (all rows are from WA); but it would be if the data were from the whole USA. Then, you see several variables identified as _factor_ or _ordered factor_, which are categorical variables: they can be analyzed statistically but not in the same way that numbers.
-
-[Go to table of contents.](#part1)
-
-<a id='part3'></a>
-
-## Data Processes
-
-Data is obtained via different processes. When you observe reality, you can _classsify_, _count_ or _measure_. Each of these decisions produces data with some basic characteristics; which are represented via categories or numerical values.  
-
-
-<a id='part31'></a>
-
-### Classification
-
-Categorical data are the output of the classification process. The classification can propose an incremental or non-incremental differentiation. The former are named ordinal data and the latter nominal data. A nominal classification related to education can be type of school funding: public or private; while an ordinal one can be: elementary, middle, high, college and graduate school level.
-
-<a id='part311'></a>
-
-#### <span style="color:blue"> 1. Visualization for nominal scales</span>
-
-
-Let's see some raw values in the variable _**LocaleType**_:
-
 ```{r head, eval=FALSE}
-head(eduwa$LocaleType,50) #first fifty values
+head(eduwa$LocaleType,50)
 ```
-
-You can not get a clear idea of what a data table has, so a simple **frequency table** is the first tool to see what these nominal data are telling us:
 
 ```{r freqTab_abs, eval=FALSE}
 # absolute values
@@ -206,7 +117,7 @@ paletteHere=rainbow(length(ToPlot)) # customizing set of colors
 # plotting
 pie(x=ToPlot,#table
     col = paletteHere, 
-    labels = ToPlot1,
+    labels = ToPlot,
     main=titleText,
     sub=sourceText)
 
@@ -488,132 +399,55 @@ So far, we have used the _basic_ R capabilities for plotting.
 
 There are alternative libraries, like **ggplot2**, that are also frequently used. However, it has a different approach, which allows to add layers that let you customize your plot. The classic approach for ggplot is:
 
-* Avoid missing values and prepare frequency table. We replaced the missing values (now they are 'Unknown'). Here, you need to transform the _table_ into a **data frame**:
-
-```{r ggplot1, eval=FALSE}
-tableFreq=as.data.frame(ToPlot) #converting the table with numbers into the data frame and called it Table of Freq
-names(tableFreq)=c("locale","pct")
-tableFreq_Ordered=tableFreq[order(-tableFreq$pct),]
-tableFreq_Ordered
-```
-
-* Call the library:
-
-```{r ggplot_call, warning=FALSE}
-library(ggplot2)
-```
-
-* Create the base _object_, which is not a plot, just informing the main variables:
-
-```{r ggplot_base, eval=FALSE}
-#base GGPLOT2 starts with a "base", telling WHAT VARIABLES TO PLOT
-base=ggplot(data = tableFreq_Ordered,
-             aes(x = locale, #aes - aestatics; choose the columns which to plot
-                 y = pct)) + 
-     scale_x_discrete(limits=tableFreq_Ordered$locale)
-```
-
-* On top of the previous object, add the layer that produces the main plots (the next layers will add or customize elements in the plot):
-
-```{r bar_gg, eval=FALSE}
-plot1 = base + geom_bar(fill ="gray",
-                        stat = 'identity') # y is just what it is! plotting what it sees, no calculations are done by R
-plot1
-```
-
-* We can now pay attention to the titles:
-
-```{r title_gg, eval=FALSE}
-plot2 = plot1 + labs(title=titleText2,
-                     x =NULL, 
-                     y = NULL,
-                     caption = sourceText)
-plot2
-
-```
-
-* Add the reference lines:
-
-```{r refl_gg, eval=FALSE}
-plot3 = plot2 + geom_hline(yintercept = 25, #where
-                           linetype="dashed", 
-                           size=1.5, #thickness
-                           alpha=0.5) #transparency
-plot3
-```
-
-* Customize the axes:
-
-```{r units_gg, eval=FALSE}
-library(scales)
-
-# customize Y axis
-plot4 = plot3 + scale_y_continuous(breaks=c(0,10, 25,40,50),
-                                 limits = c(0, 50), # expand = c(0, 0),
-                                 labels=scales::unit_format(suffix = '%')) 
-plot4
-```
-
-* Less ink and title/subtitle positions:
-```{r title2_gg, eval=FALSE}
-plot5 = plot4 + theme(panel.background = element_rect(fill = "white",
-                                                    colour = "grey50"),
-                    plot.caption = element_text(hjust = 0), # default was 1
-                    plot.title = element_text(hjust = 0.5))
-plot5
-```
-
-* annotating the bars:
-
-```{r annot_gg, eval=FALSE}
-plot6 = plot5 + geom_text(aes(y = pct ,
-                            label = paste0(round(pct,2), '%')),
-                        vjust=1, # if flipping 'hjust'
-                        size = 3)
-# wanna flip the plot?
-plot6 #+ coord_flip()
-
-```
 
 
-Bar plots are the default option for categorical variables. In general, you see the distribution of the classification, which allows you to identify **concentration**. For that reason, ordering the bars by height can be helpful:
-
-```{r orderBars_base, eval=FALSE}
-###
-ToPlotOrd=sort(ToPlot)
-###
-
-par(mgp=c(1,0.5,0)) # distance label, tickText,tick
-location=barplot(ToPlotOrd,
-         col = paletteHereNew,
-         border=NA,
-         main=titleText2,
-         xlim=c(0,50), 
-         xlab = '(in %)',
-         horiz = T,
-         cex.names = 0.7,
-         cex.lab=0.6,
-         xaxt="n") # no x-axis, so I customize it below...
-
-text(x=ToPlotOrd,y=location,labels=plotLabels,pos = 2,cex = 0.7) 
-title(sub=sourceText, adj=0,cex.sub=0.7,line = 3) 
-
-# reference line
-abline(v=25,lty=3,lwd=3)
-
-# customizong tick values
-xtick<-c(0,10,25,40,50)
-axis(side=1, at=xtick, labels = xtick,cex.axis=0.8)
-
-```
-
-The plot above simply change the order of the _table_. If you want to do the same with _ggplot_ you should try the command:
-
-```{r orderFor_gg, eval=FALSE}
-tableFreq[order(-tableFreq$pct),]
-```
 
 
 <span style="color:red"> Exercise:<br>Use ggplot to show a bar plot ordered by share size.</span>
 
-Please, see the changes in the code above
+### Excercise solution
+
+```{r ggplot, eval=FALSE}
+tableFreq=as.data.frame(ToPlot) 
+names(tableFreq)=c("locale","pct")
+tableFreq_Ordered=tableFreq[order(-tableFreq$pct),] #ordering in ggplot
+tableFreq_Ordered
+```
+
+
+```{r ggplot1, eval=FALSE}
+library(ggplot2)
+library(scales)
+base=ggplot(data = tableFreq_Ordered,
+             aes(x = locale,
+                 y = pct))
+plot1 = base + geom_bar(fill ="gray",
+                        stat = 'identity')
+plot2 = plot1 + labs(title=titleText2,
+                     x =NULL, 
+                     y = NULL,
+                     caption = sourceText)
+plot3 = plot2 + geom_hline(yintercept = 25,
+                           linetype="dashed", 
+                           size=1.5, 
+                           alpha=0.5)
+plot4 = plot3 + scale_y_continuous(breaks=c(0,10, 25,40,50),
+                                 limits = c(0, 50),
+                                 labels=scales::unit_format(suffix = '%')) 
+plot5 = plot4 + theme(panel.background = element_rect(fill = "white",
+                                                    colour = "grey50"),
+                    plot.caption = element_text(hjust = 0),
+                    plot.title = element_text(hjust = 0.5))
+plot6 = plot5 + geom_text(aes(y = pct ,
+                            label = paste0(round(pct,2), '%')),
+                        vjust=1,
+                        size = 3)
+plot7 = plot6 + coord_flip() + scale_x_discrete(limits=tableFreq_Ordered$locale) #flipping the plot and changing the indexes
+plot7
+```
+
+
+
+
+
+

@@ -531,7 +531,6 @@ plot2 = plot1 + labs(title=titleText2,
                      y = NULL,
                      caption = sourceText)
 plot2
-
 ```
 
 * Add the reference lines:
