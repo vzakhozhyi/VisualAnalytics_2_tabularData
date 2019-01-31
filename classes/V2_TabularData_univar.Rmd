@@ -206,7 +206,7 @@ paletteHere=rainbow(length(ToPlot)) # customizing set of colors
 # plotting
 pie(x=ToPlot,#table
     col = paletteHere, 
-    labels = ToPlot1,
+    labels = ToPlot,
     main=titleText,
     sub=sourceText)
 
@@ -739,7 +739,7 @@ Now, we can use ggplot:
 ```{r ordTable_gg, eval=FALSE}
 
 base = ggplot(frqTabO,aes(x=grade,y=pct))
-base + geom_bar(stat = 'identity') 
+base + geom_bar(stat = 'identity') #identity means that we use the value
 ```
 
 
@@ -847,7 +847,7 @@ Of course, ggplot has a version of histograms:
 ```{r ggplotHistogram, eval=FALSE}
 base= ggplot(eduwa3,aes(x = Reduced.Lunch))  
 h1= base + geom_histogram()
-h1 
+h1
 ```
 
 Notice that you do not get the same plot. Let's see the info from the basic function:
@@ -872,7 +872,7 @@ Below, you can see a version where both plots are the same:
 base= ggplot(eduwa3,aes(x = Reduced.Lunch))  
 h1= base + geom_histogram(binwidth = 20,boundary=0) #changing width
 h1= h1 + stat_bin(binwidth = 20, aes(label=..count..), 
-                  geom = "text",boundary = 0,vjust=-0.5)
+                  geom = "text",boundary = 0,vjust=-0.5) #putting numbers of values in each bin abouve bins
 h1
 ```
 
@@ -884,7 +884,7 @@ hist(eduwa3$Reduced.Lunch,labels = T,xlab="Reduced Lunch")
 Of course, you can make it a litle better:
 
 ```{r, eval=FALSE,fig.height=7}
-hist(eduwa3$Reduced.Lunch,labels = T,xlab="Reduced Lunch", xaxt="n") 
+hist(eduwa3$Reduced.Lunch,labels = T,xlab="Reduced Lunch", xaxt="n") #T - TRUE  
 axis(side=1, at=dataHist$breaks) # showing axis labels better
 ```
 
@@ -893,8 +893,8 @@ As mentioned before, we are plotting intervals, so the accompanying table can be
 ```{r makeIntervals, eval=FALSE}
 eduwa3$redLunchOrd=cut(eduwa3$Reduced.Lunch,
                        breaks = dataHist$breaks,
-                       include.lowest = T,
-                       ordered_result = T)
+                       include.lowest = T, #T - TRUE
+                       ordered_result = T) #T - TRUE
 ```
 
 And, as before, we use the _freq_ function:
@@ -902,7 +902,7 @@ And, as before, we use the _freq_ function:
 ```{r tableIntervals, warning=FALSE,results='asis', eval=FALSE}
 
 # no need to show count of NAs:
-freq(eduwa3$redLunchOrd,style = 'rmarkdown',report.nas = F)
+freq(eduwa3$redLunchOrd,style = 'rmarkdown',report.nas = F) #F - FALSE
 ```
 
 <span style="color:red"> Exercise:<br> Make a histogram for the variable  FREE LUNCH, and make sure it has all the right elements, and get rid of unnecessary elements.
@@ -936,7 +936,7 @@ Of course, you can clean first:
 
 ```{r removeMissing2, eval=FALSE}
 # strategy 2: 
-eduwa4=eduwa[complete.cases(eduwa$Student.Teacher.Ratio),]
+eduwa4=eduwa[complete.cases(eduwa$Student.Teacher.Ratio),] #complete.cases means keep the complete values of this variable and then shrink the dataset ==> we have a new dataset without missing variables 
 
 tapply(eduwa4$Student.Teacher.Ratio, 
        eduwa4$County, 
@@ -958,6 +958,8 @@ hist(meanValues)
 Let's compute some statistics:
 ```{r summaryMeans, eval=FALSE}
 summary(meanValues)
+
+#The county witht he min average Student/teacher ration has 11.30
 ```
 
 You can use that info, for example, to plot the mean as a reference line:
@@ -973,8 +975,8 @@ Measurements are continuous values, then a **density** plot is more appealing to
 ```{r density, eval=FALSE}
 
 mvDense=density(meanValues)
-
-plot(mvDense,main="Title",col='black',xlab=NA)
+TitleText4='Density of Student-Teacher Ratio' 
+plot(mvDense,main=TitleText4,col='black',xlab=NA)
 
 abline(v=mean(meanValues),lty=3,lwd=3,col='blue') #mean
 abline(v=median(meanValues),lty=3,lwd=3,col='red')#median
@@ -993,7 +995,7 @@ Our plots for the mean values have a more symmetrical shape. This happens when y
 
 Notice also that boxplots serve to detect **atypical** values (outliers), which I saved in _bp_: 
 ```{r outliers, eval=FALSE}
-bp$out
+bp$out #outliers of bp 
 ```
 
 We could annotate the boxplot like this:
