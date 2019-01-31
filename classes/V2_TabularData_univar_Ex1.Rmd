@@ -405,6 +405,8 @@ There are alternative libraries, like **ggplot2**, that are also frequently used
 
 <span style="color:red"> Exercise:<br>Use ggplot to show a bar plot ordered by share size.</span>
 
+### Exercise 1: Use ggplot to show a bar plot ordered by share size.
+
 ### Excercise solution
 
 ```{r ggplot, eval=FALSE}
@@ -448,6 +450,78 @@ plot7
 
 
 
+
+### Exercise 2: Lollipop
+
+### Excercise solution
+
+
+
+
+
+
+#### <span style="color:blue"> 2. Visualization for ordinal scales</span>
+
+
+```{r ordinalTable, eval=FALSE}
+table(eduwa$High.Grade,exclude = 'nothing')
+```
+
+```{r tableAsDF, eval=FALSE}
+frqTabO=as.data.frame(prop.table(table(eduwa$High.Grade)))
+names(frqTabO)=c('grade','pct')
+frqTabO
+```
+
+```{r ordTable_gg, eval=FALSE}
+
+base = ggplot(frqTabO,aes(x=grade,y=pct))
+base + geom_bar(stat = 'identity') #identity means that we use the value
+```
+
+```{r boxplot_gg, eval=FALSE}
+# boxplots do not use frequency tables
+
+# as.numeric produces turns levels of the factor into numbers
+box1 = ggplot(eduwa, aes(y=as.numeric(High.Grade))) 
+box1 = box1 + geom_boxplot() + coord_flip() # to show it horizontally
+
+box1
+```
+
+```{r boxplot_axis_labels, eval=FALSE}
+# the labels use the original ordinal levels
+ordLabels= levels(eduwa$High.Grade)
+
+box2 = box1 + scale_y_continuous(labels=ordLabels,breaks=1:15)
+box2
+```
+
+<span style="color:red"> Exercise:<br> Make sure our box plot follows the same design approach and include all the elements as in the bar plot for nominal data.
+</span>
+
+
+### Exercise 3: Make sure our box plot follows the same design approach and include all the elements as in the bar plot for nominal data.
+
+### Excercise solution
+
+```{r boxplot_gg, eval=FALSE}
+
+box1 = ggplot(eduwa, aes(y=as.numeric(High.Grade)))
+TitleBoxPlot = 'BoxPlot summarizing schools by the highest grade they teach'
+ordLabels= levels(eduwa$High.Grade)
+box1 = box1 + 
+  geom_boxplot() + 
+  coord_flip() + 
+  scale_y_continuous(labels=ordLabels,breaks=1:15) +
+  labs(title=TitleBoxPlot, 
+       y = 'Grade level',
+       caption = sourceText) + 
+  theme(panel.background = element_rect(fill = "white", colour = "grey50"),
+        plot.caption = element_text(hjust = 1),
+        plot.title = element_text(hjust = 0.5))
+box1
+```
 
 
 
