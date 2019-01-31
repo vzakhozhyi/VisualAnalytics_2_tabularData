@@ -45,3 +45,12 @@ plot = base +
 plot
 ```
 
+```{r}
+base= ggplot(mydata, aes(x=locale,pct)) 
+lolliplot1=base + geom_segment(aes(y = 0, 
+                                   x = locale, 
+                                   yend = pct, 
+                                   xend = locale), color = "grey50") 
+lolliplot1 + geom_point()
+```
+
