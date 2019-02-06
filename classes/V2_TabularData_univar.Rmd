@@ -952,6 +952,7 @@ Now let me plot a histogram of those means:
 meanValues=tapply(eduwa4$Student.Teacher.Ratio, 
                   eduwa4$County, 
                   mean)
+meanValues
 hist(meanValues)
 ```
 
@@ -959,7 +960,7 @@ Let's compute some statistics:
 ```{r summaryMeans, eval=FALSE}
 summary(meanValues)
 
-#The county witht he min average Student/teacher ration has 11.30
+#The county with the min average Student/teacher ration has 11.30
 ```
 
 You can use that info, for example, to plot the mean as a reference line:
